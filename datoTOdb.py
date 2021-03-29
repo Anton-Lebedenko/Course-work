@@ -161,25 +161,33 @@ conn = connect_db.connection
 #список для сбора всех готовых списков в один
 data_to_student_table = []
 
+#Статус----------------------------------------------------------------------------------------------------------------#
 insert_data_to_secondaries_tables(conn, importExcel.status_name, 'status', 'status_name')
 data_to_student_table.append(read_status_id_comparing_initial_data(conn, importExcel.status_name_temp))
 
+#ФИО-------------------------------------------------------------------------------------------------------------------#
 data_to_student_table.append(importExcel.student_name)
 
-#insert_data_to_student_table(conn, importExcel.date_brth, 'dates', 'date_brth')
-#insert_data_to_student_table(conn, importExcel.rnokpp, 'status', 'rnokpp')
-#insert_data_to_student_table(conn, importExcel.rnokpp, 'status', 'rnokpp')
+#Дата рождения---------------------------------------------------------------------------------------------------------#
+insert_data_to_student_table(conn, importExcel.date_brth, 'dates', 'date_brth')
 
 
+
+#insert_data_to_student_table(conn, importExcel.rnokpp, 'status', 'rnokpp')
+
+#Группа----------------------------------------------------------------------------------------------------------------#
 data_for_groups = [importExcel.group_name, importExcel.group_year, importExcel.group_number, importExcel.group_isboost]
 insert_to_group_table(conn, data_for_groups)
 
 data_for_groups_check = [importExcel.group_name_check, importExcel.group_year_check, importExcel.group_number_check, importExcel.group_isboost_check]
 data_to_student_table.append(read_group_id_comparing_initial_data(conn, data_for_groups_check))
 
+#Запись в student_table------------------------------------------------------------------------------------------------#
+
 data_to_student_table = to_list_all_first_els_for_stud_table(data_to_student_table)
 
 insert_data_to_student_table(conn, data_to_student_table)
 
+#----------------------------------------------------------------------------------------------------------------------#
 
 conn.close()
