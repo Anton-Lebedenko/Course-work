@@ -168,6 +168,7 @@ data_to_student_table.append(importExcel.student_name)
 
 #insert_data_to_student_table(conn, importExcel.date_brth, 'dates', 'date_brth')
 #insert_data_to_student_table(conn, importExcel.rnokpp, 'status', 'rnokpp')
+#insert_data_to_student_table(conn, importExcel.rnokpp, 'status', 'rnokpp')
 
 
 data_for_groups = [importExcel.group_name, importExcel.group_year, importExcel.group_number, importExcel.group_isboost]
