@@ -113,12 +113,13 @@ def insert_data_to_secondaries_tables(conn, data, name_table, name_column):
             cursor.close()
             print("Соединение с MySQL закрыто")
 
-#выполняет заполнение главной таблицы (student_table) из списка collect
+#выполняет заполнение главной таблицы (student_table) из списка data_to_student_table
 def insert_data_to_student_table(conn, data):
     cursor = conn.cursor()
     try:
         for el in data:
-            add_data = "INSERT INTO student_table ('statusID', 'student_name', 'groupID') VALUES ({})".format(el)
+            add_data = "INSERT INTO student_table ('statusID', 'student_name', 'date_brth', 'groupID') VALUES ({})".format(el)
+
             cursor.execute(add_data)
             conn.commit()
             # print("Query of data executed successfully")
@@ -169,11 +170,9 @@ data_to_student_table.append(read_status_id_comparing_initial_data(conn, importE
 data_to_student_table.append(importExcel.student_name)
 
 #Дата рождения---------------------------------------------------------------------------------------------------------#
-insert_data_to_student_table(conn, importExcel.date_brth, 'dates', 'date_brth')
+data_to_student_table.append(importExcel.date_brth)
 
 
-
-#insert_data_to_student_table(conn, importExcel.rnokpp, 'status', 'rnokpp')
 
 #Группа----------------------------------------------------------------------------------------------------------------#
 data_for_groups = [importExcel.group_name, importExcel.group_year, importExcel.group_number, importExcel.group_isboost]
