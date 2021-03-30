@@ -195,8 +195,52 @@ def read_financing_id_comparing_initial_data(conn, data):
 
 ########################################################################################################################
 
+def insert_to_specialities_table(conn, data):
+    cursor = conn.cursor()
+    try:
+        res = to_str_first_els_of_gr_spty_spon(data)
+        for el in res:
+            add_data = "INSERT INTO speciality ('speciality_number', 'speciality_name') VALUES ({})".format(el)
+            cursor.execute(add_data)
+            conn.commit()
+            # print("Query of data executed successfully")
+
+    except Error as error:
+        print(error)
+
+    finally:
+        if conn:
+            cursor.close()
+            print("Соединение с MySQL закрыто")
+
+#выполняет считывание id групп таблицы Группы в сравнении со входными данными и возвращает обратно списком
+def read_speciality_id_comparing_initial_data(conn, data):
+    cursor = conn.cursor()
+    try:
+        res = to_list_first_els_of_gr_spty_spon(data)
+        #print(res)
+        records = []
+        for el in res:
+            sql_sel = """SELECT speciality_id FROM speciality WHERE speciality_number = '{}' AND speciality_name = '{}'""".format(*el)
+            cursor.execute(sql_sel)
+            records.append(cursor.fetchone())
+
+        records = clear_id_for_stud_table(records)
+
+        return records
+
+    except Error as error:
+        print(error)
+
+    finally:
+        if conn:
+            cursor.close()
+            print("Соединение с MySQL закрыто")
+
+########################################################################################################################
+
 #из 4 списков для групп -> делает список из строк (первые элементы в строку)
-def to_str_first_els_of_groups(data):
+def to_str_first_els_of_gr_spty_spon(data):
     res = []
     for i in range(0, len(data[0])):
         line = ""
@@ -208,7 +252,7 @@ def to_str_first_els_of_groups(data):
     return res
 
 #из 4 списков для групп -> делает список списков (первые элементы в подсписок)
-def to_list_first_els_of_groups(data):
+def to_list_first_els_of_gr_spty_spon(data):
     res = []
     for i in range(0, len(data[0])):
         temp = []
@@ -218,11 +262,13 @@ def to_list_first_els_of_groups(data):
         res.append(temp)
     return res
 
+########################################################################################################################
+
 #выполняет заполнение в таблицу Группы
 def insert_to_group_table(conn, data):
     cursor = conn.cursor()
     try:
-        res = to_str_first_els_of_groups(data)
+        res = to_str_first_els_of_gr_spty_spon(data)
         for el in res:
             add_data = "INSERT INTO group_ ('group_name', 'group_year', 'group_number', 'group_isboost') VALUES ({})".format(el)
             cursor.execute(add_data)
@@ -241,7 +287,7 @@ def insert_to_group_table(conn, data):
 def read_group_id_comparing_initial_data(conn, data):
     cursor = conn.cursor()
     try:
-        res = to_list_first_els_of_groups(data)
+        res = to_list_first_els_of_gr_spty_spon(data)
         #print(res)
         records = []
         for el in res:
@@ -286,7 +332,7 @@ def insert_data_to_student_table(conn, data):
     cursor = conn.cursor()
     try:
         for el in data:
-            add_data = "INSERT INTO student_table ('statusID', 'student_name', 'date_brth', 'sexID', 'nationID', 'rnokpp', 'year_lisense', 'start_edu', 'end_edu', 'facultyID', 'dual_edu', 'degreeID', 'accession_basedID', 'formID', 'financingID', 'another_spec', 'cut_term', 'groupID') VALUES ({})".format(el)
+            add_data = "INSERT INTO student_table ('statusID', 'student_name', 'date_brth', 'sexID', 'nationID', 'rnokpp', 'year_lisense', 'start_edu', 'end_edu', 'facultyID', 'dual_edu', 'degreeID', 'accession_basedID', 'formID', 'financingID', 'another_spec', 'cut_term', 'specialityID', 'groupID') VALUES ({})".format(el)
             cursor.execute(add_data)
             conn.commit()
             # print("Query of data executed successfully")
@@ -388,6 +434,12 @@ data_to_student_table.append(importExcel.another_spec)
 #Сокращенный учебный срок----------------------------------------------------------------------------------------------#
 data_to_student_table.append(importExcel.cut_term)
 
+#Специальность---------------------------------------------------------------------------------------------------------#
+data_for_specialities = [importExcel.speciality_number, importExcel.speciality_name]
+insert_to_specialities_table(conn, data_for_specialities)
+
+data_for_specialities_check = [importExcel.speciality_number_check, importExcel.speciality_name_check]
+data_to_student_table.append(read_speciality_id_comparing_initial_data(conn, data_for_specialities_check))
 
 #Группа----------------------------------------------------------------------------------------------------------------#
 data_for_groups = [importExcel.group_name, importExcel.group_year, importExcel.group_number, importExcel.group_isboost]
