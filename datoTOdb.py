@@ -49,7 +49,6 @@ def read_sex_id_comparing_initial_data(conn, data):
             cursor.close()
             print("Соединение с MySQL закрыто")
 
-
 ########################################################################################################################
 
 #выполняет считывание id национальностей таблицы Национальности в сравнении со входными данными и возвращает обратно списком
@@ -74,6 +73,125 @@ def read_nation_id_comparing_initial_data(conn, data):
             cursor.close()
             print("Соединение с MySQL закрыто")
 
+########################################################################################################################
+
+#выполняет считывание id факультетов таблицы Факультеты в сравнении со входными данными и возвращает обратно списком
+def read_faculty_id_comparing_initial_data(conn, data):
+    cursor = conn.cursor()
+    try:
+        records = []
+        for el in data:
+            sql_sel = """SELECT faculty_id FROM faculty WHERE faculty_name = '{}'""".format(el)
+            cursor.execute(sql_sel)
+            records.append(cursor.fetchone())
+
+        records = clear_id_for_stud_table(records)
+
+        return records
+
+    except Error as error:
+        print(error)
+
+    finally:
+        if conn:
+            cursor.close()
+            print("Соединение с MySQL закрыто")
+
+########################################################################################################################
+
+#выполняет считывание id образовательных степеней таблицы Образовательные степени в сравнении со входными данными и возвращает обратно списком
+def read_academic_degree_id_comparing_initial_data(conn, data):
+    cursor = conn.cursor()
+    try:
+        records = []
+        for el in data:
+            sql_sel = """SELECT degree_id FROM academic_degree WHERE degree_name = '{}'""".format(el)
+            cursor.execute(sql_sel)
+            records.append(cursor.fetchone())
+
+        records = clear_id_for_stud_table(records)
+
+        return records
+
+    except Error as error:
+        print(error)
+
+    finally:
+        if conn:
+            cursor.close()
+            print("Соединение с MySQL закрыто")
+
+########################################################################################################################
+
+#выполняет считывание id вступлений на основе таблицы Вступление на основе в сравнении со входными данными и возвращает обратно списком
+def read_accession_based_id_comparing_initial_data(conn, data):
+    cursor = conn.cursor()
+    try:
+        records = []
+        for el in data:
+            sql_sel = """SELECT access_id FROM accession_based WHERE accession_based_name = '{}'""".format(el)
+            cursor.execute(sql_sel)
+            records.append(cursor.fetchone())
+
+        records = clear_id_for_stud_table(records)
+
+        return records
+
+    except Error as error:
+        print(error)
+
+    finally:
+        if conn:
+            cursor.close()
+            print("Соединение с MySQL закрыто")
+
+########################################################################################################################
+
+#выполняет считывание id образовательных форм таблицы Образовательные формы в сравнении со входными данными и возвращает обратно списком
+def read_education_form_id_comparing_initial_data(conn, data):
+    cursor = conn.cursor()
+    try:
+        records = []
+        for el in data:
+            sql_sel = """SELECT form_id FROM education_form WHERE form_name = '{}'""".format(el)
+            cursor.execute(sql_sel)
+            records.append(cursor.fetchone())
+
+        records = clear_id_for_stud_table(records)
+
+        return records
+
+    except Error as error:
+        print(error)
+
+    finally:
+        if conn:
+            cursor.close()
+            print("Соединение с MySQL закрыто")
+
+########################################################################################################################
+
+#выполняет считывание id финансирований таблицы Источники финансирования в сравнении со входными данными и возвращает обратно списком
+def read_financing_id_comparing_initial_data(conn, data):
+    cursor = conn.cursor()
+    try:
+        records = []
+        for el in data:
+            sql_sel = """SELECT financing_id FROM financing WHERE financing_name = '{}'""".format(el)
+            cursor.execute(sql_sel)
+            records.append(cursor.fetchone())
+
+        records = clear_id_for_stud_table(records)
+
+        return records
+
+    except Error as error:
+        print(error)
+
+    finally:
+        if conn:
+            cursor.close()
+            print("Соединение с MySQL закрыто")
 
 ########################################################################################################################
 
@@ -168,7 +286,7 @@ def insert_data_to_student_table(conn, data):
     cursor = conn.cursor()
     try:
         for el in data:
-            add_data = "INSERT INTO student_table ('statusID', 'student_name', 'date_brth', 'sexID', 'nationID', 'rnokpp', 'year_lisense', 'start_edu', 'end_edu', 'groupID') VALUES ({})".format(el)
+            add_data = "INSERT INTO student_table ('statusID', 'student_name', 'date_brth', 'sexID', 'nationID', 'rnokpp', 'year_lisense', 'start_edu', 'end_edu', 'facultyID', 'dual_edu', 'degreeID', 'accession_basedID', 'formID', 'financingID', 'another_spec', 'cut_term', 'groupID') VALUES ({})".format(el)
             cursor.execute(add_data)
             conn.commit()
             # print("Query of data executed successfully")
@@ -240,6 +358,35 @@ data_to_student_table.append(importExcel.start_edu)
 
 #Конец учебы-----------------------------------------------------------------------------------------------------------#
 data_to_student_table.append(importExcel.end_edu)
+
+#Факультеты------------------------------------------------------------------------------------------------------------#
+insert_data_to_secondaries_tables(conn, importExcel.faculty, 'faculty', 'faculty_name')
+data_to_student_table.append(read_faculty_id_comparing_initial_data(conn, importExcel.faculty_temp))
+
+#Дуальное образование--------------------------------------------------------------------------------------------------#
+data_to_student_table.append(importExcel.dual_edu)
+
+#Образовательная степень-----------------------------------------------------------------------------------------------#
+insert_data_to_secondaries_tables(conn, importExcel.academic_degree, 'academic_degree', 'degree_name')
+data_to_student_table.append(read_academic_degree_id_comparing_initial_data(conn, importExcel.academic_degree_temp))
+
+#Вступление на базе----------------------------------------------------------------------------------------------------#
+insert_data_to_secondaries_tables(conn, importExcel.accession_based, 'accession_based', 'accession_based_name')
+data_to_student_table.append(read_accession_based_id_comparing_initial_data(conn, importExcel.accession_based_temp))
+
+#Форма учебы-----------------------------------------------------------------------------------------------------------#
+insert_data_to_secondaries_tables(conn, importExcel.education_form, 'education_form', 'form_name')
+data_to_student_table.append(read_education_form_id_comparing_initial_data(conn, importExcel.education_form_temp))
+
+#Источник финансирования-----------------------------------------------------------------------------------------------#
+insert_data_to_secondaries_tables(conn, importExcel.financing, 'financing', 'financing_name')
+data_to_student_table.append(read_financing_id_comparing_initial_data(conn, importExcel.financing_temp))
+
+#Окончание другой специальности----------------------------------------------------------------------------------------#
+data_to_student_table.append(importExcel.another_spec)
+
+#Сокращенный учебный срок----------------------------------------------------------------------------------------------#
+data_to_student_table.append(importExcel.cut_term)
 
 
 #Группа----------------------------------------------------------------------------------------------------------------#
