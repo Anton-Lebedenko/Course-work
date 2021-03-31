@@ -116,8 +116,8 @@ CREATE TABLE IF NOT EXISTS student_table(
     date_brth DATE, 
     sexID INT,													/* foreign key */
     nationID INT,												/* foreign key */
-    rnokpp INT,
-    year_lisense YEAR,
+    rnokpp INTEGER,
+    year_lisense DATE,
     start_edu DATE,
     end_edu DATE,
     facultyID INT,												/* foreign key */
@@ -152,14 +152,14 @@ CREATE TABLE IF NOT EXISTS student_table(
 
 
 execute_query(connection, status_table)
-#execute_query(connection, sex_table)
-#execute_query(connection, nationality_table)
-#execute_query(connection, faculty_table)
-#execute_query(connection, academic_degree_table)
-#execute_query(connection, accession_based_table)
-#execute_query(connection, education_form_table)
-#execute_query(connection, financing_table)
-#execute_query(connection, speciality_table)
+execute_query(connection, sex_table)
+execute_query(connection, nationality_table)
+execute_query(connection, faculty_table)
+execute_query(connection, academic_degree_table)
+execute_query(connection, accession_based_table)
+execute_query(connection, education_form_table)
+execute_query(connection, financing_table)
+execute_query(connection, speciality_table)
 #execute_query(connection, specialization_table)
 #execute_query(connection, edu_program_table)
 #execute_query(connection, profession_table)
