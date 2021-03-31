@@ -135,17 +135,28 @@ specialization_temp = excel_data_df['Спеціалізація'].tolist()
 specialization = list(dict.fromkeys(specialization_temp))
 
 specialization = list(map(str, specialization))
-specialization = [x for x in specialization if x != 'nan']
+specialization = [x if x != 'nan' else 'None' for x in specialization]
 specialization = sorted(specialization)
 
-specialization_split = [el.split(' ', 1) for el in specialization]
-specialization_number = [el[0] for el in specialization_split]
-specialization_name = [el[1] for el in specialization_split]
+specialization_split = [el.split(' ', 1) if el != 'None' else 'None' for el in specialization]
+specialization_number = [el[0] if el != 'None' else 'None' for el in specialization_split]
+specialization_name = [el[1] if el != 'None' else 'None' for el in specialization_split]
 
 #print(specialization)
 #print(specialization_split)
 #print(specialization_number)
 #print(specialization_name)
+
+#----------------------------------------------#
+
+specialization_for_check = excel_data_df['Спеціалізація'].tolist()
+specialization_for_check = [x if x != 'nan' else 'None' for x in specialization_for_check]
+print(specialization_for_check)
+specialization_split_check = [el.split(' ', 1) for el in speciality_for_check]
+
+specialization_number_check = [el[0] for el in speciality_split_check]
+specialization_name_check = [el[1] for el in speciality_split_check]
+
 
 ########################################################################################################################
 edu_program_temp = excel_data_df['Освітня програма'].tolist()

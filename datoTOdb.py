@@ -441,6 +441,14 @@ insert_to_specialities_table(conn, data_for_specialities)
 data_for_specialities_check = [importExcel.speciality_number_check, importExcel.speciality_name_check]
 data_to_student_table.append(read_speciality_id_comparing_initial_data(conn, data_for_specialities_check))
 
+#Специализация---------------------------------------------------------------------------------------------------------#
+data_for_specializations = [importExcel.speciality_number, importExcel.speciality_name]
+#insert_to_specialities_table(conn, data_for_specialities)
+
+#data_for_specialities_check = [importExcel.speciality_number_check, importExcel.speciality_name_check]
+#data_to_student_table.append(read_speciality_id_comparing_initial_data(conn, data_for_specialities_check))
+
+
 #Группа----------------------------------------------------------------------------------------------------------------#
 data_for_groups = [importExcel.group_name, importExcel.group_year, importExcel.group_number, importExcel.group_isboost]
 insert_to_group_table(conn, data_for_groups)
