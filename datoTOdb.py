@@ -195,6 +195,7 @@ def read_financing_id_comparing_initial_data(conn, data):
 
 ########################################################################################################################
 
+#выполняет заполнение в таблицу Специальности
 def insert_to_specialities_table(conn, data):
     cursor = conn.cursor()
     try:
@@ -213,7 +214,7 @@ def insert_to_specialities_table(conn, data):
             cursor.close()
             print("Соединение с MySQL закрыто")
 
-#выполняет считывание id групп таблицы Группы в сравнении со входными данными и возвращает обратно списком
+#выполняет считывание id специальностей таблицы Специальности в сравнении со входными данными и возвращает обратно списком
 def read_speciality_id_comparing_initial_data(conn, data):
     cursor = conn.cursor()
     try:
@@ -222,6 +223,99 @@ def read_speciality_id_comparing_initial_data(conn, data):
         records = []
         for el in res:
             sql_sel = """SELECT speciality_id FROM speciality WHERE speciality_number = '{}' AND speciality_name = '{}'""".format(*el)
+            cursor.execute(sql_sel)
+            records.append(cursor.fetchone())
+
+        records = clear_id_for_stud_table(records)
+
+        return records
+
+    except Error as error:
+        print(error)
+
+    finally:
+        if conn:
+            cursor.close()
+            print("Соединение с MySQL закрыто")
+
+########################################################################################################################
+
+#выполняет заполнение в таблицу Специализации
+def insert_to_specialization_table(conn, data):
+    cursor = conn.cursor()
+    try:
+        res = to_str_first_els_of_gr_spty_spon(data)
+        for el in res:
+            add_data = "INSERT INTO specialization ('specialization_number', 'specialization_name') VALUES ({})".format(el)
+            cursor.execute(add_data)
+            conn.commit()
+            # print("Query of data executed successfully")
+
+    except Error as error:
+        print(error)
+
+    finally:
+        if conn:
+            cursor.close()
+            print("Соединение с MySQL закрыто")
+
+#выполняет считывание id специализаций таблицы Специализации в сравнении со входными данными и возвращает обратно списком
+def read_specialization_id_comparing_initial_data(conn, data):
+    cursor = conn.cursor()
+    try:
+        res = to_list_first_els_of_gr_spty_spon(data)
+        #print(res)
+        records = []
+        for el in res:
+            sql_sel = """SELECT specialization_id FROM specialization WHERE specialization_number = '{}' AND specialization_name = '{}'""".format(*el)
+            cursor.execute(sql_sel)
+            records.append(cursor.fetchone())
+
+        records = clear_id_for_stud_table(records)
+
+        return records
+
+    except Error as error:
+        print(error)
+
+    finally:
+        if conn:
+            cursor.close()
+            print("Соединение с MySQL закрыто")
+
+########################################################################################################################
+
+#выполняет считывание id образ. программ таблицы Образ. программы в сравнении со входными данными и возвращает обратно списком
+def read_edu_program_id_comparing_initial_data(conn, data):
+    cursor = conn.cursor()
+    try:
+        records = []
+        for el in data:
+            sql_sel = """SELECT edu_program_id FROM edu_program WHERE edu_program_name = ("{}")""".format(el)
+            cursor.execute(sql_sel)
+            records.append(cursor.fetchone())
+
+        records = clear_id_for_stud_table(records)
+
+        return records
+
+    except Error as error:
+        print(error)
+
+    finally:
+        if conn:
+            cursor.close()
+            print("Соединение с MySQL закрыто")
+
+########################################################################################################################
+
+#выполняет считывание id профессий таблицы Профессии в сравнении со входными данными и возвращает обратно списком
+def read_profession_id_comparing_initial_data(conn, data):
+    cursor = conn.cursor()
+    try:
+        records = []
+        for el in data:
+            sql_sel = """SELECT profession_id FROM profession WHERE profession_name = ("{}")""".format(el)
             cursor.execute(sql_sel)
             records.append(cursor.fetchone())
 
@@ -314,7 +408,8 @@ def insert_data_to_secondaries_tables(conn, data, name_table, name_column):
     cursor = conn.cursor()
     try:
         for el in data:
-            add_data = "INSERT INTO {} ({}) VALUES ('{}')".format(name_table, name_column, el)
+            add_data = """INSERT INTO {} ({}) VALUES ("{}")""".format(name_table, name_column, el)
+            #print(add_data)
             cursor.execute(add_data)
             conn.commit()
             # print("Query of data executed successfully")
@@ -332,7 +427,7 @@ def insert_data_to_student_table(conn, data):
     cursor = conn.cursor()
     try:
         for el in data:
-            add_data = "INSERT INTO student_table ('statusID', 'student_name', 'date_brth', 'sexID', 'nationID', 'rnokpp', 'year_lisense', 'start_edu', 'end_edu', 'facultyID', 'dual_edu', 'degreeID', 'accession_basedID', 'formID', 'financingID', 'another_spec', 'cut_term', 'specialityID', 'groupID') VALUES ({})".format(el)
+            add_data = "INSERT INTO student_table ('statusID', 'student_name', 'date_brth', 'sexID', 'nationID', 'rnokpp', 'year_lisense', 'start_edu', 'end_edu', 'facultyID', 'dual_edu', 'degreeID', 'accession_basedID', 'formID', 'financingID', 'another_spec', 'cut_term', 'specialityID', 'specializationID', 'edu_programID', 'professionID', 'course_num', 'groupID') VALUES ({})".format(el)
             cursor.execute(add_data)
             conn.commit()
             # print("Query of data executed successfully")
@@ -442,12 +537,22 @@ data_for_specialities_check = [importExcel.speciality_number_check, importExcel.
 data_to_student_table.append(read_speciality_id_comparing_initial_data(conn, data_for_specialities_check))
 
 #Специализация---------------------------------------------------------------------------------------------------------#
-data_for_specializations = [importExcel.speciality_number, importExcel.speciality_name]
-#insert_to_specialities_table(conn, data_for_specialities)
+data_for_specializations = [importExcel.specialization_number, importExcel.specialization_name]
+insert_to_specialization_table(conn, data_for_specializations)
 
-#data_for_specialities_check = [importExcel.speciality_number_check, importExcel.speciality_name_check]
-#data_to_student_table.append(read_speciality_id_comparing_initial_data(conn, data_for_specialities_check))
+data_for_specializations_check = [importExcel.specialization_number_check, importExcel.specialization_name_check]
+data_to_student_table.append(read_specialization_id_comparing_initial_data(conn, data_for_specializations_check))
 
+#Образовательная программа---------------------------------------------------------------------------------------------#
+insert_data_to_secondaries_tables(conn, importExcel.edu_program, 'edu_program', 'edu_program_name')
+data_to_student_table.append(read_edu_program_id_comparing_initial_data(conn, importExcel.edu_program_temp))
+
+#Профессия-------------------------------------------------------------------------------------------------------------#
+insert_data_to_secondaries_tables(conn, importExcel.profession, 'profession', 'profession_name')
+data_to_student_table.append(read_profession_id_comparing_initial_data(conn, importExcel.profession_temp))
+
+#Курс------------------------------------------------------------------------------------------------------------------#
+data_to_student_table.append(importExcel.course_num)
 
 #Группа----------------------------------------------------------------------------------------------------------------#
 data_for_groups = [importExcel.group_name, importExcel.group_year, importExcel.group_number, importExcel.group_isboost]
